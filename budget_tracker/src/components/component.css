@@ -1,0 +1,27 @@
+.budget_title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.card_button {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.card_button button {
+  margin: 5px;
+}
+
+.modal_card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  border: 1px solid black;
+  box-shadow: 24;
+  height: 150px;
+  background-color: white;
+}
