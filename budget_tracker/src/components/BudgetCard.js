@@ -1,49 +1,67 @@
-import { Card, ProgressBar, Stack } from "react-bootstrap";
-import "./component.css";
-import { Button } from "react-bootstrap";
+import { Button, Card, ProgressBar, Stack } from "react-bootstrap";
+import { currencyFormatter } from "../utils";
 
-function BudgetCard(props) {
-  const { name, amount, max } = props;
+export default function BudgetCard({
+  name,
+  amount,
+  max,
+  gray,
+  hideButtons,
+  onAddExpenseClick,
+  onViewExpensesClick,
+}) {
+  const classNames = [];
+  if (amount > max) {
+    classNames.push("bg-danger", "bg-opacity-10");
+  } else if (gray) {
+    classNames.push("bg-light");
+  }
 
   return (
-    <div className="budget_card">
-      <Card>
-        <Card.Body
-          style={
-            ratio(amount, max) <= 100
-              ? { backgroundColor: "rgb(247, 247, 247) " }
-              : { backgroundColor: "rgb(237, 169, 169) " }
-          }
-        >
-          <Card.Title className="budget_title">
-            <div className="me-2">{name}</div>
-            <div>{`$${amount} / $${max}`}</div>
-          </Card.Title>
+    <Card className={classNames.join(" ")}>
+      <Card.Body>
+        <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
+          <div className="me-2">{name}</div>
+          <div className="d-flex align-items-baseline">
+            {currencyFormatter.format(amount)}
+            {max && (
+              <span className="text-muted fs-6 ms-1">
+                / {currencyFormatter.format(max)}
+              </span>
+            )}
+          </div>
+        </Card.Title>
+        {max && (
           <ProgressBar
             className="rounded-pill"
-            now={ratio(amount, max)}
-            variant={ratio(amount, max) <= 100 ? "primary" : "danger"}
-          ></ProgressBar>
-          <div className="card_button">
-            <Button variant="outline-primary" onClick={handleOpen}>
+            variant={getProgressBarVariant(amount, max)}
+            min={0}
+            max={max}
+            now={amount}
+          />
+        )}
+        {!hideButtons && (
+          <Stack direction="horizontal" gap="2" className="mt-4">
+            <Button
+              variant="outline-primary"
+              className="ms-auto"
+              onClick={onAddExpenseClick}
+            >
               Add Expense
             </Button>
-          </div>
-        </Card.Body>
-      </Card>
-    </div>
+            <Button onClick={onViewExpensesClick} variant="outline-secondary">
+              View Expenses
+            </Button>
+          </Stack>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
-export default BudgetCard;
 
-const ratio = (amount, max) => {
-  return (amount / max) * 100;
-};
-
-function handleOpen() {
-  return (
-    <div>
-      <h2>hello world</h2>
-    </div>
-  );
+function getProgressBarVariant(amount, max) {
+  const ratio = amount / max;
+  if (ratio < 0.5) return "primary";
+  if (ratio < 0.75) return "warning";
+  return "danger";
 }
